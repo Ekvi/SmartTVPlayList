@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.IOException;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringTestConfiguration.class)
@@ -20,8 +22,8 @@ public class ExUaParserIntegrationTest {
     private Parser parser;
 
     @Test
-    public void test() {
-        String siteName = "http://ex.ua";
+    public void test() throws IOException {
+        String siteName = "http://www.ex.ua/ru/video";
         parser = factory.createParser("exua");
 
         parser.getCategories(siteName);

@@ -11,7 +11,11 @@ import javax.servlet.ServletContext;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "com.smarttv")
+@PropertySource({
+        "classpath:database.properties"
+})
 @ImportResource({
+        "classpath:hibernate.xml",
         "classpath:spring-basic.xml"
 })
 public class SpringTestConfiguration {
