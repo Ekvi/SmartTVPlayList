@@ -1,9 +1,12 @@
 package com.smarttv.utils.parsers;
 
 
-import java.io.IOException;
-import java.util.List;
+import com.smarttv.models.Video;
+
+
+import java.util.Set;
 
 public interface Parser {
-    public List<String> getCategories(String url) throws IOException;
+    public Set<Video> getAllVideo(String url);
+    public Set<Video> getNewVideo(String url);
 }

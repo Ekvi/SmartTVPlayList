@@ -2,51 +2,135 @@ package com.smarttv.utils.parsers;
 
 
 import com.smarttv.models.Constants;
+
+import com.smarttv.models.Video;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Component;
+
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ExUaParser extends DefaultParser {
-    private List<String> categories;
 
-    public ExUaParser() {
-        categories = new ArrayList<String>();
-        categories.add("Зарубежное");
-        categories.add("Наше");
-        categories.add("Зарубежные сериалы");
-        categories.add("Наши сериалы");
-        categories.add("Мультфильмы");
-        categories.add("Аниме");
-        categories.add("Документальное");
-        categories.add("Клипы");
-        categories.add("Концерты");
-        categories.add("Шоу и Передачи");
-        categories.add("Уроки и Тренинги");
-        categories.add("Спорт");
+    @Override
+    public Set<Video> getNewVideo(String url) {
+        Set<Video> videos = new HashSet<Video>();
+        Elements elements;
+        Set<String> links;
+        Document doc = getHTMLDocument(url);
 
+        if(doc != null) {
+            elements = getElements(doc);
+            links = removeExtraLinks(elements);
+            videos = createVideos(links);
+        }
+
+        return videos;
     }
 
     @Override
-    public List<String> getCategories(String url) throws IOException {
-        Document doc = Jsoup.connect(url).userAgent(Constants.userAgent).timeout(30000).get();
-        parse(doc, doc.body().html());
-        return null;
+    public Set<Video> getAllVideo(String url) {
+        Set<Video> videos = new HashSet<Video>();
+        Elements elements;
+        Set<String> links;
+        Document doc;
+
+        do {
+            doc = getHTMLDocument(url);
+
+            if(doc != null) {
+                elements = getElements(doc);
+                links = removeExtraLinks(elements);
+                videos.addAll(createVideos(links));
+                url = getNextPage(doc.body().html());
+            }
+        } while(!url.isEmpty());
+
+        return videos;
     }
 
-    private void parse(Document doc, String content) {
-
-        //Elements elements = doc.getElementsByAttributeValueMatching("href", "\\/video\\/.*Зарубежное");
-        Elements elements = doc.getElementsByAttributeValueMatching("href", "\\/video\\/");
-        System.out.println(elements.size());
-
-        for(Element element : elements) {
-            System.out.println(element.attr("href"));
+    private Document getHTMLDocument(String url) {
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(url).userAgent(Constants.USER_AGENT).timeout(30000).get();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return doc;
+    }
+
+    private Elements getElements(Document doc)  {
+        Elements table = doc.getElementsByAttributeValue("class", "include_0");
+        return table.get(0).getElementsByAttribute("href");
+    }
+
+    private Set<String> removeExtraLinks(Elements elements) {
+        Set<String> videoLinks = new HashSet<String>();
+
+        for(Element e : elements) {
+            String link = regExp(e.attr("href"), "(^\\/\\d+.*)", 1, Constants.EX_UA);
+            if(!link.isEmpty()) {
+                videoLinks.add(link);
+            }
+        }
+        return videoLinks;
+     }
+
+    private Set<Video> createVideos(Set<String> links) {
+        Set<Video> videos = new HashSet<Video>();
+
+        for(String url : links) {
+            videos.add(createVideo(url));
+        }
+        return videos;
+    }
+
+    Video createVideo(String url) {
+        Document doc = getHTMLDocument(url);
+        String content = doc.body().html();
+        String title = extractTitle(doc);
+
+        return new Video(title, extractImageLink(doc, title), extractVideoLink(content), extractDescription(content));
+    }
+
+    private String extractTitle(Document doc) {
+        return extractParameter(doc, "name", "content", "title");
+    }
+
+    private String extractImageLink(Document doc, String title) {
+        return extractParameter(doc, "alt", "src", title);
+    }
+
+    private String extractParameter(Document doc, String attr1, String attr2, String value) {
+        Elements elements = doc.getElementsByAttributeValue(attr1, value);
+        return elements.size() == 0 ? "" : elements.get(0).attr(attr2);
+    }
+
+    private String extractVideoLink(String content) {
+        return regExp(content, ".+(\\/get\\/\\d+).+\\.(mkv|avi)", 1, Constants.EX_UA);
+    }
+
+    private String extractDescription(String content) {
+        return regExp(content, "(<b>Страна.*Аудио.*<\\/b>)", 1, "");
+    }
+
+    String regExp(String content, String regexp, int group, String append) {
+        Pattern pattern = Pattern.compile(regexp);
+        Matcher matcher = pattern.matcher(content);
+        String result = "";
+        if (matcher.find()) {
+            result = append + matcher.group(group);
+        }
+        return result;
+    }
+
+    String getNextPage(String content) {
+        return regExp(content, ".*(\\/ru\\/video.*p=\\d+).*перейти на следующую страницу", 1, Constants.EX_UA);
     }
 }
