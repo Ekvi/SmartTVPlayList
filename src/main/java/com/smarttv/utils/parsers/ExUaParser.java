@@ -11,7 +11,9 @@ import org.jsoup.select.Elements;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -96,7 +98,7 @@ public class ExUaParser extends DefaultParser {
         String content = doc.body().html();
         String title = extractTitle(doc);
 
-        return new Video(title, extractImageLink(doc, title), extractVideoLink(content), extractDescription(content));
+        return new Video(title, extractImageLink(doc, title), extractVideoLinks(content), extractDescription(content));
     }
 
     private String extractTitle(Document doc) {
@@ -112,8 +114,17 @@ public class ExUaParser extends DefaultParser {
         return elements.size() == 0 ? "" : elements.get(0).attr(attr2);
     }
 
-    private String extractVideoLink(String content) {
-        return regExp(content, ".+(\\/get\\/\\d+).+\\.(mkv|avi)", 1, Constants.EX_UA);
+    private List<VideoInfo> extractVideoLinks(String content) {
+        List<VideoInfo> videos = new ArrayList<VideoInfo>();
+        Pattern pattern = Pattern.compile(".+(\\/get\\/\\d+).+>(.+\\.(avi|mkv|mp4))");
+        Matcher matcher = pattern.matcher(content);
+
+        while (matcher.find()) {
+            System.out.println(matcher.group(2));
+            videos.add(new VideoInfo(matcher.group(2), Constants.EX_UA + matcher.group(1)));
+
+        }
+        return videos;
     }
 
     private String extractDescription(String content) {

@@ -1,16 +1,20 @@
 package com.smarttv.models;
 
 
+import com.smarttv.utils.parsers.VideoInfo;
+
+import java.util.List;
+
 public class Video {
     private String title;
     private String imageUrl;
-    private String videoUrl;
+    private List<VideoInfo> videos;
     private String description;
 
-    public Video(String title, String imageUrl, String videoUrl, String description) {
+    public Video(String title, String imageUrl, List<VideoInfo>videos, String description) {
         this.title = title;
         this.imageUrl = imageUrl;
-        this.videoUrl = videoUrl;
+        this.videos = videos;
         this.description = description;
     }
 
@@ -30,12 +34,12 @@ public class Video {
         this.imageUrl = imageUrl;
     }
 
-    public String getVideoUrl() {
-        return videoUrl;
+    public List<VideoInfo> getVideos() {
+        return videos;
     }
 
-    public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
+    public void setVideos(List<VideoInfo> videos) {
+        this.videos = videos;
     }
 
     public String getDescription() {

@@ -3,40 +3,37 @@ package com.smarttv.utils.parsers;
 
 import com.smarttv.SpringTestConfiguration;
 import com.smarttv.models.Video;
-import com.smarttv.utils.parsers.FactoryParsers;
-import com.smarttv.utils.parsers.Parser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringTestConfiguration.class)
 public class ExUaParserIntegrationTest {
+    private ExUaParser exUaParser = new ExUaParser();
 
     @Test
     public void testGetAllVideo() {
-        String url = "http://www.ex.ua/ru/video/foreign?r=23775";
+        //String url = "http://www.ex.ua/ru/video/foreign?r=23775";
+        String url = "http://www.ex.ua/ru/video/our?r=23775";
         //String url = "http://www.ex.ua/ru/video/foreign?r=23775&p=3733";
-        ExUaParser parser = new ExUaParser();
 
-        parser.getAllVideo(url);
+        exUaParser.getAllVideo(url);
     }
 
     @Test
     public void testGetNewVideo() {
-        ExUaParser parser = new ExUaParser();
         String url = "http://www.ex.ua/ru/video/foreign?r=23775";
 
-        Set<Video> videos = parser.getNewVideo(url);
+        Set<Video> videos = exUaParser.getNewVideo(url);
 
         assertEquals(20, videos.size());
 
@@ -44,7 +41,6 @@ public class ExUaParserIntegrationTest {
 
     @Test
     public void testCreateVideo() throws IOException {
-        ExUaParser exUaParser = new ExUaParser();
         String description = "<b>Страна</b>: США<br><b>Производство</b>:RCR Media Group, Trilogy Entertainment " +
                 "Group, Solar Filmworks<br><b>Жанр</b>: триллер, драма<br><b>Год выпуска</b>: 2013<br><b>" +
                 "Продолжительность</b>: 01:38:28<br><b>Перевод </b>:<font color=\"#DA1220\"><b> Одноголосый " +
@@ -71,9 +67,33 @@ public class ExUaParserIntegrationTest {
 
         Video video = exUaParser.createVideo("http://www.ex.ua/89122804?r=2,23775");
 
+        assertEquals(1, video.getVideos().size());
         assertEquals("Фантом / Phantom (2013) BDRemux 1080p", video.getTitle());
-        assertEquals("http://ex.ua/get/159538680", video.getVideoUrl());
+        assertEquals("http://ex.ua/get/159538680", video.getVideos().get(0).getLink());
+        assertEquals("Фантом - Phantom (2013) BDRemux 1080p.mkv", video.getVideos().get(0).getName());
         assertEquals("http://fs177.www.ex.ua/show/159521076/159521076.jpg?1600", video.getImageUrl());
         assertEquals(description, video.getDescription());
+    }
+
+    @Test
+    public void testCreateVideoForTrainings() {
+        String expectedTitle = "Steve Uria - Weider Ruthless Workout Program [2013, фитнес, Видеоурок, DVDRip, ENG]";
+        Video video = exUaParser.createVideo("http://www.ex.ua/89255223?r=28714,23775");
+
+        assertEquals(21, video.getVideos().size());
+        assertEquals(expectedTitle, video.getTitle());
+        assertEquals("http://ex.ua/get/159985480", video.getVideos().get(5).getLink());
+        assertEquals("08 - Core &amp; Flex.avi", video.getVideos().get(8).getName());
+        assertEquals("http://fs195.www.ex.ua/show/159985267/159985267.png?1600", video.getImageUrl());
+    }
+
+    @Test
+    public void testCreateVideoForSerials() {
+        Video video = exUaParser.createVideo("http://www.ex.ua/85614430?r=1988,23775");
+
+        assertEquals(13, video.getVideos().size());
+        assertTrue(!video.getTitle().isEmpty());
+        assertEquals("Helix.S02E01.1080p.rus.LostFilm.TV.mkv", video.getVideos().get(0).getName());
+        assertEquals("Helix.S02E13.1080p.rus.LostFilm.TV.mkv", video.getVideos().get(12).getName());
     }
 }
