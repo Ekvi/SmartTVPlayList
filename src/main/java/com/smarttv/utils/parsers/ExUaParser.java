@@ -19,6 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ExUaParser extends DefaultParser {
+    private String category;
+    private String siteName;
 
     @Override
     public Set<Video> getNewVideo(String url) {
@@ -37,7 +39,10 @@ public class ExUaParser extends DefaultParser {
     }
 
     @Override
-    public Set<Video> getAllVideo(String url) {
+    public Set<Video> getAllVideo(String url, String category, String siteName) {
+        this.category = category;
+        this.siteName = siteName;
+
         Set<Video> videos = new HashSet<Video>();
         Elements elements;
         Set<String> links;
@@ -88,6 +93,7 @@ public class ExUaParser extends DefaultParser {
         Set<Video> videos = new HashSet<Video>();
 
         for(String url : links) {
+            System.out.println("create video url " + url);
             videos.add(createVideo(url));
         }
         return videos;
@@ -98,7 +104,8 @@ public class ExUaParser extends DefaultParser {
         String content = doc.body().html();
         String title = extractTitle(doc);
 
-        return new Video(title, extractImageLink(doc, title), extractVideoLinks(content), extractDescription(content));
+        return new Video(title, extractImageLink(doc, title),
+                extractVideoLinks(content), extractDescription(content), category, siteName);
     }
 
     private String extractTitle(Document doc) {
@@ -116,13 +123,11 @@ public class ExUaParser extends DefaultParser {
 
     private List<VideoInfo> extractVideoLinks(String content) {
         List<VideoInfo> videos = new ArrayList<VideoInfo>();
-        Pattern pattern = Pattern.compile(".+(\\/get\\/\\d+).+>(.+\\.(avi|mkv|mp4))");
+        Pattern pattern = Pattern.compile(".+(\\/get\\/\\d+).+>(.+\\.(avi|mkv|mp4|mpg|ts))", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(content);
 
         while (matcher.find()) {
-            System.out.println(matcher.group(2));
             videos.add(new VideoInfo(matcher.group(2), Constants.EX_UA + matcher.group(1)));
-
         }
         return videos;
     }

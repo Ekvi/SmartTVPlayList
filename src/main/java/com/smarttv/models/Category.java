@@ -6,17 +6,22 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "exua_categories")
-public class ExUaCategory {
+@Table(name = "categories")
+public class Category {
     @Id
     @Column
     private String name;
     @Column
     private String uri;
+    @Column(name = "site_name")
+    private String siteName;
 
-    public ExUaCategory(String name, String uri) {
+    public Category() {}
+
+    public Category(String name, String uri, String siteName) {
         this.name = name;
         this.uri = uri;
+        this.siteName = siteName;
     }
 
     public String getName() {
@@ -33,5 +38,13 @@ public class ExUaCategory {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getSiteName() {
+        return siteName;
+    }
+
+    public void setSiteName(String siteName) {
+        this.siteName = siteName;
     }
 }

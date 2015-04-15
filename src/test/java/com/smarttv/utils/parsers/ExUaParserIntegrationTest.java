@@ -2,6 +2,7 @@ package com.smarttv.utils.parsers;
 
 
 import com.smarttv.SpringTestConfiguration;
+import com.smarttv.models.Category;
 import com.smarttv.models.Video;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,10 +24,10 @@ public class ExUaParserIntegrationTest {
     @Test
     public void testGetAllVideo() {
         //String url = "http://www.ex.ua/ru/video/foreign?r=23775";
-        String url = "http://www.ex.ua/ru/video/our?r=23775";
+        Category category = new Category("http://www.ex.ua/ru/video/our?r=23775", "Фильмы наши", "ex.ua");
         //String url = "http://www.ex.ua/ru/video/foreign?r=23775&p=3733";
 
-        exUaParser.getAllVideo(url);
+        exUaParser.getAllVideo(category.getUri(), category.getName(), category.getSiteName());
     }
 
     @Test
@@ -71,7 +72,7 @@ public class ExUaParserIntegrationTest {
         assertEquals("Фантом / Phantom (2013) BDRemux 1080p", video.getTitle());
         assertEquals("http://ex.ua/get/159538680", video.getVideos().get(0).getLink());
         assertEquals("Фантом - Phantom (2013) BDRemux 1080p.mkv", video.getVideos().get(0).getName());
-        assertEquals("http://fs177.www.ex.ua/show/159521076/159521076.jpg?1600", video.getImageUrl());
+        assertTrue(video.getImageUrl().endsWith("www.ex.ua/show/159521076/159521076.jpg?1600"));
         assertEquals(description, video.getDescription());
     }
 
@@ -84,7 +85,7 @@ public class ExUaParserIntegrationTest {
         assertEquals(expectedTitle, video.getTitle());
         assertEquals("http://ex.ua/get/159985480", video.getVideos().get(5).getLink());
         assertEquals("08 - Core &amp; Flex.avi", video.getVideos().get(8).getName());
-        assertEquals("http://fs195.www.ex.ua/show/159985267/159985267.png?1600", video.getImageUrl());
+        assertTrue(video.getImageUrl().endsWith("http://fs195.www.ex.ua/show/159985267/159985267.png?1600"));
     }
 
     @Test

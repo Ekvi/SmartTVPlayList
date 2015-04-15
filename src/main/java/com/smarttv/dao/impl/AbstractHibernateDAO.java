@@ -1,6 +1,7 @@
 package com.smarttv.dao.impl;
 
 import com.smarttv.dao.BasicCrudDao;
+import com.smarttv.dto.VideoDto;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -28,6 +29,14 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
 
     protected Session currentSession() {
         return sessionFactory.getCurrentSession();
+    }
+
+
+    @Override
+    public void save(E entity) {
+        VideoDto video = (VideoDto)entity;
+        System.out.println(video.getTitle() + " " + video.getVideoNames());
+        currentSession().save(entity);
     }
 
     @Override
