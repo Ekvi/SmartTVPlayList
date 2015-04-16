@@ -94,19 +94,28 @@ public class ExUaParser extends DefaultParser {
 
         for(String url : links) {
             System.out.println("create video url " + url);
-            videos.add(createVideo(url));
+            Video video = createVideo(url);
+            if(video != null) {
+                videos.add(video);
+            }
         }
         return videos;
     }
 
-    Video createVideo(String url) {
-        Document doc = getHTMLDocument(url);
-        String content = doc.body().html();
-        String title = extractTitle(doc);
+   Video createVideo(String url) {
+       Document doc = getHTMLDocument(url);
+       String content = doc.body().html();
+       String title = extractTitle(doc);
 
-        return new Video(title, extractImageLink(doc, title),
-                extractVideoLinks(content), extractDescription(content), category, siteName);
-    }
+       List<VideoInfo> infos = extractVideoLinks(content);
+       Video video = null;
+
+       if(!infos.isEmpty()) {
+           video = new Video(title, extractImageLink(doc, title),
+                            infos, extractDescription(content), category, siteName);
+       }
+       return video;
+   }
 
     private String extractTitle(Document doc) {
         return extractParameter(doc, "name", "content", "title");
@@ -123,7 +132,7 @@ public class ExUaParser extends DefaultParser {
 
     private List<VideoInfo> extractVideoLinks(String content) {
         List<VideoInfo> videos = new ArrayList<VideoInfo>();
-        Pattern pattern = Pattern.compile(".+(\\/get\\/\\d+).+>(.+\\.(avi|mkv|mp4|mpg|ts))", Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile(".+(\\/get\\/\\d+).+>(.+\\.(avi|mkv|mp4|mpg|ts|flv|wmv))", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(content);
 
         while (matcher.find()) {

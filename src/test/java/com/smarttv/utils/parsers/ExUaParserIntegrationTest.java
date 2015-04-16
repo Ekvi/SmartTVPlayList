@@ -77,6 +77,22 @@ public class ExUaParserIntegrationTest {
     }
 
     @Test
+    public void testCreateVideoSkipRarIso() {
+        Video rar = exUaParser.createVideo("http://www.ex.ua/1102067?r=28714");
+        Video iso = exUaParser.createVideo("http://www.ex.ua/14599992?r=28714");
+
+        assertNull(rar);
+        assertNull(iso);
+    }
+
+    @Test
+    public void testCreateVideoSkipEmptyPage() {
+        Video empty = exUaParser.createVideo("http://www.ex.ua/1493264?r=28714");
+
+        assertNull(empty);
+    }
+
+    @Test
     public void testCreateVideoForTrainings() {
         String expectedTitle = "Steve Uria - Weider Ruthless Workout Program [2013, фитнес, Видеоурок, DVDRip, ENG]";
         Video video = exUaParser.createVideo("http://www.ex.ua/89255223?r=28714,23775");
