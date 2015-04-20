@@ -4,6 +4,7 @@ package com.smarttv;
 import com.smarttv.dto.VideoDto;
 import com.smarttv.models.Category;
 import com.smarttv.models.Video;
+import com.smarttv.services.CategoryService;
 import com.smarttv.services.VideoService;
 import com.smarttv.utils.Utils;
 import com.smarttv.utils.parsers.ExUaParser;
@@ -23,7 +24,9 @@ import java.util.Set;
 @ContextConfiguration(classes = SpringTestConfiguration.class)
 public class ExUa {
     @Autowired
-    private VideoService service;
+    private VideoService videoService;
+    @Autowired
+    private CategoryService categoryService;
     @Autowired
     private Utils utils;
 
@@ -31,7 +34,7 @@ public class ExUa {
 
     @Test
     public void addVideoToDB() {
-        List<Category> categories = service.getCategories();
+        List<Category> categories = categoryService.getAllCategories();
 
         for(Category category : categories) {
             Set<Video> videos = parser.getAllVideo(category.getUri(), category.getName(), category.getSiteName());
@@ -42,13 +45,13 @@ public class ExUa {
                 videosDto.add(new VideoDto(video));
             }
 
-            service.saveAll(videosDto);
+            videoService.saveAll(videosDto);
         }
     }
 
     @Test
     public void addOurFilms() {
-        Category category = service.getCategory("Фильмы наши");
+        Category category = categoryService.getCategory("Фильмы наши", "ex.ua");
 
         Set<Video> videos = parser.getAllVideo(category.getUri(), category.getName(), category.getSiteName());
         Set<VideoDto> videosDto = new HashSet<VideoDto>();
@@ -57,13 +60,13 @@ public class ExUa {
             videosDto.add(new VideoDto(video));
         }
         System.out.println("dto " + videosDto.size());
-        service.saveAll(videosDto);
+        videoService.saveAll(videosDto);
 
     }
 
     @Test
     public void addTrainings() {
-        Category category = service.getCategory("Уроки и Тренинги");
+        Category category = categoryService.getCategory("Уроки и Тренинги", "ex.ua");
         utils.addVideoToDB(category);
     }
 
@@ -73,14 +76,14 @@ public class ExUa {
         videosDto.add(new VideoDto(new Video("title5", "image2", new ArrayList<VideoInfo>(), "description2", "category", "ex.ua")));
         videosDto.add(new VideoDto(new Video("title4", "image3", new ArrayList<VideoInfo>(), "description3", "category", "ex.ua")));
 
-        service.saveAll(videosDto);
+        videoService.saveAll(videosDto);
     }
 
 
 
     @Test
     public void get() {
-        List<VideoDto> list = service.getVideo("category", "ex.ua");
+        List<VideoDto> list = videoService.getVideo("Уроки и Тренинги", "ex.ua");
 
         for(VideoDto exua : list) {
             System.out.println(exua.getTitle());

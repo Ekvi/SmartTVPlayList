@@ -1,7 +1,9 @@
 package com.smarttv.controllers;
 
+import com.smarttv.dto.VideoDto;
 import com.smarttv.models.Category;
 import com.smarttv.services.CategoryService;
+import com.smarttv.services.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -16,6 +18,8 @@ import java.util.List;
 public class MainController {
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private VideoService videoService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String printWelcome(ModelMap model) {

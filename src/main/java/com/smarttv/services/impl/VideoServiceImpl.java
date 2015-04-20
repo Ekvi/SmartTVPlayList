@@ -1,9 +1,7 @@
 package com.smarttv.services.impl;
 
-import com.smarttv.dao.CategoryDao;
 import com.smarttv.dao.VideoDao;
 import com.smarttv.dto.VideoDto;
-import com.smarttv.models.Category;
 import com.smarttv.services.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,19 +14,7 @@ import java.util.Set;
 @Transactional
 public class VideoServiceImpl implements VideoService {
     @Autowired
-    private CategoryDao categoryDao;
-    @Autowired
     private VideoDao videoDao;
-
-    @Override
-    public List<Category> getCategories() {
-        return categoryDao.getAll();
-    }
-
-    @Override
-    public Category getCategory(String name) {
-        return categoryDao.get("name", name);
-    }
 
     @Transactional(readOnly = false)
     public void saveAll(Set<? extends VideoDto> videos) {
