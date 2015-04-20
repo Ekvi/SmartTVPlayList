@@ -12,7 +12,7 @@
           <title>
               <![CDATA[EX.UA]]>
           </title>
-          <playlist_url><![CDATA[ http://localhost:8080/playList?name=exua]]></playlist_url>
+          <playlist_url><![CDATA[ http://localhost:8080/playList?name=ex.ua]]></playlist_url>
               <%--<![CDATA[ http://obovse.ru/smarttv/fsfilmscategory.xml ]]>--%>
           <description>
               <%--<![CDATA[

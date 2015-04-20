@@ -67,9 +67,6 @@ public class ExUa {
         utils.addVideoToDB(category);
     }
 
-
-
-
     @Test
     public void testAddExUa() {
         Set<VideoDto> videosDto = new HashSet<VideoDto>();

@@ -1,13 +1,11 @@
 package com.smarttv.dao.impl;
 
 import com.smarttv.dao.BasicCrudDao;
-import com.smarttv.dto.VideoDto;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -34,8 +32,6 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
 
     @Override
     public void save(E entity) {
-        VideoDto video = (VideoDto)entity;
-        System.out.println(video.getTitle() + " " + video.getVideoNames());
         currentSession().save(entity);
     }
 
