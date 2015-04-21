@@ -15,12 +15,12 @@ public class CategoryDaoImpl extends AbstractHibernateDAO<Category> implements C
         super(Category.class);
     }
 
-    @Override
+    /*@Override
     public Category get(String property, Object value, String property2, Object value2) {
         Criteria criteria = criteria();
         criteria.add(Restrictions.eq(property, value));
         criteria.add(Restrictions.eq(property2, value2));
 
         return (Category)criteria.uniqueResult();
-    }
+    }*/
 }

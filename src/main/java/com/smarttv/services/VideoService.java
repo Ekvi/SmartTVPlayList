@@ -8,5 +8,6 @@ import java.util.Set;
 
 public interface VideoService {
     public void saveAll(Set<? extends VideoDto> videos);
-    public List<VideoDto> getVideo(String category, String siteName);
+    public List<VideoDto> getVideoList(String category, String siteName);
+    public VideoDto getVideo(String title, String siteName);
 }

@@ -83,7 +83,7 @@ public class ExUa {
 
     @Test
     public void get() {
-        List<VideoDto> list = videoService.getVideo("Уроки и Тренинги", "ex.ua");
+        List<VideoDto> list = videoService.getVideoList("Уроки и Тренинги", "ex.ua");
 
         for(VideoDto exua : list) {
             System.out.println(exua.getTitle());

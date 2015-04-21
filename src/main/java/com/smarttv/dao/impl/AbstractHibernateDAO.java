@@ -1,6 +1,7 @@
 package com.smarttv.dao.impl;
 
 import com.smarttv.dao.BasicCrudDao;
+import com.smarttv.dto.VideoDto;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -46,6 +47,15 @@ public abstract class AbstractHibernateDAO<E> implements BasicCrudDao<E> {
     public E get(String property, Object value) {
         return (E) criteria().add(Restrictions.eq(property, value))
                 .uniqueResult();
+    }
+
+    @Override
+    public E get(String property, Object value, String property2, Object value2) {
+        Criteria criteria = criteria();
+        criteria.add(Restrictions.eq(property, value));
+        criteria.add(Restrictions.eq(property2, value2));
+
+        return (E)criteria.uniqueResult();
     }
 
     @Override

@@ -24,7 +24,12 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public List<VideoDto> getVideo(String category, String siteName) {
+    public List<VideoDto> getVideoList(String category, String siteName) {
         return videoDao.getList("category", category, "siteName", siteName);
+    }
+
+    @Override
+    public VideoDto getVideo(String title, String siteName) {
+        return videoDao.get("title", title, "siteName", siteName);
     }
 }
